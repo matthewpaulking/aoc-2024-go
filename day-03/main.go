@@ -60,7 +60,6 @@ func main() {
 
 	answer2 := 0
 	for _, s := range accepted_operations {
-		fmt.Println(s)
 		number_1, number_2 := extractNumberPair(s)
 		answer2 += number_1 * number_2
 	}
