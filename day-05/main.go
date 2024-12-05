@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -66,22 +67,12 @@ func isValidChange(change []int, ruleMap map[int][]int) bool {
 		rules := ruleMap[page]
 		// Check if any number that should come after appears before
 		for j := 0; j < i; j++ {
-			if contains(rules, change[j]) {
+			if slices.Contains(rules, change[j]) {
 				return false
 			}
 		}
 	}
 	return true
-}
-
-// Helper function to check if a slice contains a value
-func contains(slice []int, val int) bool {
-	for _, item := range slice {
-		if item == val {
-			return true
-		}
-	}
-	return false
 }
 
 // Get middle value from a slice
@@ -98,7 +89,7 @@ func fixChangeOrder(change []int, ruleMap map[int][]int) []int {
 		for j := i; j > 0; j-- {
 			curr := result[j]
 			prev := result[j-1]
-			if contains(ruleMap[curr], prev) {
+			if slices.Contains(ruleMap[curr], prev) {
 				// Swap if current number should come before previous
 				result[j], result[j-1] = result[j-1], result[j]
 			}
