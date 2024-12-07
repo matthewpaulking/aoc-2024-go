@@ -149,7 +149,6 @@ func main() {
 	// grid, pos := read_grid("test.txt")
 	grid, pos := read_grid("input.txt")
 	original_grid := deep_clone_grid(grid)
-	// fmt.Println("Original grid:", original_grid)
 	starting_pos := pos
 	path := slices.Clone(grid)
 	dir := Up
@@ -164,15 +163,9 @@ func main() {
 
 	total := count_path(path)
 	fmt.Println("Answer 1:", total)
-	// fmt.Println(path)
 
 	obstruction_count := 0
-	stop := false
-	// fmt.Println("Original grid:", original_grid)
 	for i := range path {
-		if stop {
-			break
-		}
 		for j := range path[i] {
 			// Skip starting position
 			if i == starting_pos.x && j == starting_pos.y {
@@ -180,32 +173,18 @@ func main() {
 			}
 			// Skip grid positions where guard will not go
 			if path[i][j] != "X" {
-				// fmt.Println("SKIP: ", i, j)
 				continue
 			}
 			// add obstacle to copy of grid
 			grid_copy := deep_clone_grid(grid)
 			current_dir := Up
-			// fmt.Println("PLACE OBSTACLE: ", i, j)
 			grid_copy[i][j] = "#"
 			grid_copy[starting_pos.x][starting_pos.y] = "^"
 			pos = starting_pos
-			// for i := range grid {
-			// 	for j := range grid[i] {
-			// 		fmt.Print(original_grid[i][j])
-			// 	}
-			// 	fmt.Println("")
-			// }
-			// fmt.Println("STARTING POS: ", pos)
 			loop := make([]Point, 0)
 			first_obstacle_found := false
 			for !is_out_of_bounds(pos, original_grid) {
-				// fmt.Println("LOOP: ", loop)
 				if first_obstacle_found && detect_loop(loop) {
-					// fmt.Println("Loop detected")
-					// fmt.Println("Obstacle placed at: ", i, j)
-					// fmt.Println("LOOP: ", loop)
-					// fmt.Println("")
 					obstruction_count++
 					break
 				}
@@ -215,18 +194,6 @@ func main() {
 	}
 
 	fmt.Println("Answer 2:", obstruction_count)
-
-	// a := Point{3, 3}
-	// b := Point{4, 4}
-	// c := Point{5, 5}
-	// d := Point{6, 6}
-	//
-	// s := make([]Point, 9, 9)
-	// cycle_slice(s, a)
-	// cycle_slice(s, b)
-	// cycle_slice(s, c)
-	// cycle_slice(s, d)
-	// fmt.Println(s)
 }
 func deep_clone_grid(grid [][]string) [][]string {
 	new_grid := make([][]string, len(grid))
@@ -238,39 +205,8 @@ func deep_clone_grid(grid [][]string) [][]string {
 }
 
 func detect_loop(points []Point) bool {
-	if len(points) > 2000 { // set this arbitrarily high
+	if len(points) > 150 { // set this arbitrarily high
 		return true
 	}
-	if len(points)%2 == 0 {
-		// fmt.Println("EVEN NUMBER OF POINTS")
-		return false
-	}
-	if len(points) < 9 {
-		return false
-	}
-	// fmt.Println("DETECT LOOP: ", points)
-	chunk_size := (len(points) - 1) / 2
-	// fmt.Println("CHUNK SIZE: ", chunk_size)
-	checks := 0
-	for i := 0; i <= chunk_size; i++ {
-		if points[i] == points[i+chunk_size] {
-			checks++
-			// fmt.Println("CHECKS: ", checks)
-		}
-	}
-	if checks == chunk_size+1 {
-		// fmt.Println("CHECKS = CHUNK SIZE")
-		return true
-	}
-
-	// if points[0] == points[4] && points[1] == points[5] && points[2] == points[6] && points[3] == points[7] && points[4] == points[8] {
-	// 	return true
-	// }
-
 	return false
-}
-
-func cycle_slice(s []Point, i Point) {
-	copy(s[:len(s)-1], s[1:]) // shift everything left
-	s[len(s)-1] = i           // put new item at the end
 }
