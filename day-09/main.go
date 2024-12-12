@@ -5,6 +5,7 @@ import (
 	"container/list"
 	"fmt"
 	"os"
+	// "slices"
 	"strconv"
 )
 
@@ -33,10 +34,21 @@ func fill(s string, n int) []string {
 	}
 	return result
 }
+func blocks_to_string(b []Block) []string {
+	output := make([]string, 0)
+	for _, v := range b {
+		if v.id == -1 {
+			output = append(output, fill(".", v.length)...)
+		} else {
+			output = append(output, fill(convert_to_string(v.id), v.length)...)
+		}
+	}
+	return output
+}
 
 func main() {
-	// file, err := os.Open("test.txt")
-	file, err := os.Open("input.txt")
+	file, err := os.Open("test.txt")
+	// file, err := os.Open("input.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -76,6 +88,8 @@ func main() {
 			}
 		}
 	}
+	// memory_string_2 := slices.Clone(memory_string)
+
 	// fmt.Println(memory_string)
 	swap_index := len(memory_string) - 1
 	for i, v := range memory_string {
@@ -89,8 +103,6 @@ func main() {
 			memory_string[i], memory_string[swap_index] = memory_string[swap_index], memory_string[i]
 			swap_index--
 		}
-		// fmt.Println(memory_string)
-
 	}
 	// fmt.Println(memory_string)
 	total1 := 0
@@ -101,4 +113,68 @@ func main() {
 		total1 = total1 + (i * convert_to_int(v))
 	}
 	fmt.Println("Answer 1:", total1)
+	// fmt.Println(blocks)
+	// fmt.Println(blocks_to_string(blocks))
+
+	// SWAPPING BLOCKS DOESN'T WORK
+
+	tick := 0
+	for i, v := range blocks {
+		if v.length == 0 || v.id >= 0 {
+			continue
+		}
+		// HERE
+		for j := id_count; j >= 0; j-- {
+			swap := len(blocks) - 1
+			for blocks[swap].id == -1 {
+				swap--
+			}
+			for j := swap; j >= 0; j-- {
+				// fmt.Println("SWAP BLOCK", blocks[swap])
+				fmt.Println("BLOCK", v, "SWAP", blocks[swap])
+				diff := v.length - blocks[swap].length
+				if diff >= 0 {
+					// split the block
+					staying := Block{id: -1, length: diff}
+					swapping := Block{id: -1, length: 3 - diff}
+					blocks[i], blocks[swap] = blocks[swap], swapping
+					swap--
+					// insert staying block after i
+					blocks = append(blocks[:i+1], append([]Block{staying}, blocks[i+1:]...)...)
+					i++
+					tick++
+				} else {
+					// move on to next block
+					// fmt.Println("DIFF IS GREATER")
+					swap--
+				}
+			}
+		}
+		fmt.Println(blocks_to_string(blocks))
+	}
+	fmt.Println(blocks)
+	fmt.Println(blocks_to_string(blocks))
+
+	// STRING APPROACH TO PART2
+	// swap := len(memory_string_2) - 1
+	// for i, v := range memory_string_2 {
+	// 	if swap == i {
+	// 		break
+	// 	}
+	// 	if v == "." {
+	// 		for memory_string_2[swap] == "." {
+	// 			swap--
+	// 		}
+	// 		memory_string_2[i], memory_string_2[swap] = memory_string_2[swap], memory_string_2[i]
+	// 		swap--
+	// 	}
+	// }
+
+	// total2 := 0
+	// for i, v := range blocks {
+	// 	if v.id == -1 {
+	// 		break
+	// 	}
+	// 	total1 = total1 + (i * convert_to_int(v))
+	// }
 }
